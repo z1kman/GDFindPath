@@ -4,7 +4,7 @@ extends Node3D
 
 @export var acceleration = 25.0
 @export var moveSpeed = 5.0
-@export var mouseSensitivity = 0.01
+@export var mouseSensitivity = 0.005
 @export var mouseZoomStep = 1
 
 var velocity = Vector3.ZERO
@@ -60,6 +60,7 @@ func updateDirection():
 		velocity = Vector3.ZERO
 	
 	return dir.normalized()
+	
 	
 #extends Node3D
 #
