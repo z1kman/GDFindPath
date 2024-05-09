@@ -3,14 +3,22 @@ extends Node3D
 # camera move
 @export_range(0, 100, 1) var camera_move_speed: float = 20.0
 
+# camera rotate
+var camera_rotation_direction: int = 0
+@export_range(0, 10, 0.1) var camera_rotation_speed: float = 0.20
+@export_range(0, 20, 1) var camera_base_rotation_speed: float = 10
+@export_range(0, 10, 1) var camera_socket_rotation_x_min: float = -1.20
+@export_range(0, 10, 1) var camera_socket_rotation_x_max: float = -0.20
+
 # camera pan
 @export_range(0, 32, 4) var camera_automatic_pan_margin:int = 16
-@export_range(0, 32, 4) var camera_automatic_pan_speed:float = 12
+@export_range(0, 32, 4) var camera_automatic_pan_speed:float = 18
+
 
 # camera zoom
 var camera_zoom_direction = 0
 @export_range(0, 100, 1) var camera_zoom_speed = 40.0
-@export_range(0, 100, 1) var camera_zoom_min = 10.0
+@export_range(0, 100, 1) var camera_zoom_min = 4.0
 @export_range(0, 100, 1) var camera_zoom_max = 25.0
 @export_range(0, 2, 0.1) var camera_zoom_speed_damp = 0.92
 
@@ -19,6 +27,14 @@ var camera_can_move_base = true
 var camera_can_process = true
 var camera_can_zoom = true
 var camera_can_automatic_pan = true
+var camera_can_rotate_base = true
+var camera_can_rotate_socket_x = true
+var camera_can_rotate_by_mouse_offset = true
+
+# Internal flags
+var camera_is_rotating_base = false
+var camera_is_rotating_mouse = false
+var mouse_last_position: Vector2 = Vector2.ZERO
 
 # Nodes
 @onready var camera_socket = $cameraSocket
@@ -35,13 +51,34 @@ func _process(delta) -> void:
 	camera_base_move(delta)
 	camera_zoom_update(delta)
 	camera_automatic_pan(delta)
+	camera_base_rotate(delta)
+	camera_rotate_to_mouse_offsets(delta)
 	
 func _unhandled_input(event) -> void:
+	# Camera zoom
 	if event.is_action("camera_zoom_in"):
 		camera_zoom_direction = -1
 	elif event.is_action("camera_zoom_out"):
 		camera_zoom_direction =  1
 	
+	# Camera rotations
+	if event.is_action_pressed("camera_rotate_right"):
+		camera_is_rotating_base = true
+		camera_rotation_direction = -1
+	elif event.is_action_pressed("camera_rotate_left"):
+		camera_is_rotating_base = true
+		camera_rotation_direction = 1
+	elif event.is_action_released("camera_rotate_left") or event.is_action_released('camera_rotate_right'):
+		camera_is_rotating_base = false
+		
+	if event.is_action_pressed("camera_rotate"):
+		mouse_last_position = get_viewport().get_mouse_position()
+		camera_can_automatic_pan = false
+		camera_is_rotating_mouse = true
+	elif event.is_action_released("camera_rotate"):
+		camera_is_rotating_mouse = false
+		camera_can_automatic_pan = true
+		
 	
 # base move (WASD)
 func camera_base_move(delta: float) -> void:
@@ -65,6 +102,33 @@ func camera_zoom_update(delta: float) -> void:
 	var new_zoom = clamp(camera.position.z + camera_zoom_speed * camera_zoom_direction * delta, camera_zoom_min, camera_zoom_max)
 	camera.position.z = new_zoom
 	camera_zoom_direction *= camera_zoom_speed_damp
+
+func camera_rotate_to_mouse_offsets(delta: float) -> void:
+	if !camera_can_rotate_by_mouse_offset or !camera_is_rotating_mouse: return
+	
+	var mouse_offset: Vector2 = get_viewport().get_mouse_position()
+	mouse_offset = mouse_offset - mouse_last_position
+	
+	mouse_last_position = get_viewport().get_mouse_position()
+	
+	camera_base_rotate_left_right(delta, mouse_offset.x)
+	camera_socket_rotate_x(delta, mouse_offset.y)
+
+func camera_base_rotate(delta: float) -> void:
+	if !camera_can_rotate_base or !camera_is_rotating_base: return
+	
+	camera_base_rotate_left_right(delta, camera_rotation_direction * camera_base_rotation_speed)
+	
+func camera_socket_rotate_x(delta: float, dir: float) -> void:
+	if !camera_can_rotate_socket_x: return
+	
+	var new_rotation_x: float = camera_socket.rotation.x
+	new_rotation_x -= dir * delta * camera_rotation_speed
+	new_rotation_x = clamp(new_rotation_x, camera_socket_rotation_x_min, camera_socket_rotation_x_max)
+	camera_socket.rotation.x = new_rotation_x
+	
+func camera_base_rotate_left_right(delta: float, dir: float) -> void:
+	rotation.y += dir * camera_rotation_speed * delta
 
 func camera_automatic_pan(delta: float) -> void: 
 	if !camera_can_automatic_pan: return
