@@ -1,0 +1,71 @@
+[gd_scene load_steps=10 format=3 uid="uid://q0e1dmfxo6s6"]
+
+[ext_resource type="Material" uid="uid://cxto2htq07a43" path="res://material/grass/grass.tres" id="1_p6uem"]
+[ext_resource type="Script" path="res://script/RTSCamera.gd" id="2_am2r0"]
+[ext_resource type="Script" path="res://script/Player_Interface.gd" id="3_ek8n3"]
+[ext_resource type="Texture2D" uid="uid://b2psn7qpsuyw" path="res://image/ui-select-dropbox.png" id="4_ix1yc"]
+[ext_resource type="PackedScene" uid="uid://c7hwe3l504riw" path="res://scene/testunit.tscn" id="5_bkrp5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_iknut"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ooeav"]
+sky_material = SubResource("ProceduralSkyMaterial_iknut")
+
+[sub_resource type="Environment" id="Environment_ow0sb"]
+background_mode = 2
+sky = SubResource("Sky_ooeav")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t1276"]
+size = Vector3(100, 1, 100)
+
+[node name="world" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ow0sb")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.390295, 0.650391)
+material_override = ExtResource("1_p6uem")
+size = Vector3(100, 1, 100)
+
+[node name="cameraBase" type="Node3D" parent="."]
+script = ExtResource("2_am2r0")
+
+[node name="cameraSocket" type="Node3D" parent="cameraBase"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 4, 0)
+
+[node name="Camera3D" type="Camera3D" parent="cameraBase/cameraSocket"]
+
+[node name="visibleunits_area3D" type="Area3D" parent="cameraBase"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="cameraBase/visibleunits_area3D"]
+shape = SubResource("BoxShape3D_t1276")
+
+[node name="Player_Interface" type="Node2D" parent="."]
+script = ExtResource("3_ek8n3")
+
+[node name="ui_dragbox" type="NinePatchRect" parent="Player_Interface"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.20741, 1.16744)
+texture = ExtResource("4_ix1yc")
+region_rect = Rect2(0, 0, 128, 128)
+
+[node name="Button" type="Button" parent="Player_Interface"]
+offset_left = 14.0
+offset_top = 551.0
+offset_right = 391.0
+offset_bottom = 648.0
+scale = Vector2(0.999036, 0.792069)
+text = "Test"
+
+[node name="testunit" parent="." instance=ExtResource("5_bkrp5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0775795, 0, -7.40534)

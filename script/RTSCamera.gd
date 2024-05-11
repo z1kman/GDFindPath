@@ -26,7 +26,7 @@ var camera_zoom_direction = 0
 var camera_can_move_base = true
 var camera_can_process = true
 var camera_can_zoom = true
-var camera_can_automatic_pan = true
+var camera_can_automatic_pan = false
 var camera_can_rotate_base = true
 var camera_can_rotate_socket_x = true
 var camera_can_rotate_by_mouse_offset = true
@@ -73,11 +73,11 @@ func _unhandled_input(event) -> void:
 		
 	if event.is_action_pressed("camera_rotate"):
 		mouse_last_position = get_viewport().get_mouse_position()
-		camera_can_automatic_pan = false
+		#camera_can_automatic_pan = false
 		camera_is_rotating_mouse = true
 	elif event.is_action_released("camera_rotate"):
 		camera_is_rotating_mouse = false
-		camera_can_automatic_pan = true
+		#camera_can_automatic_pan = true
 		
 	
 # base move (WASD)
