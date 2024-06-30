@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://c7hwe3l504riw"]
+[gd_scene load_steps=4 format=3 uid="uid://c7hwe3l504riw"]
+
+[ext_resource type="Script" path="res://scene/testunit.gd" id="1_a1oac"]
+[ext_resource type="Texture2D" uid="uid://b2psn7qpsuyw" path="res://image/ui-select-dropbox.png" id="2_2ddyc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h0cg8"]
 
 [node name="testunit" type="Node3D"]
+script = ExtResource("1_a1oac")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.19209e-07, 0)
@@ -17,3 +21,10 @@ transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1.00732, 0)
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGBox3D"]
 transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0.342968, 0.623816)
 size = Vector3(1, 1, 1.146)
+
+[node name="selected" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43639, 0)
+modulate = Color(0.788235, 1, 0.188235, 1)
+pixel_size = 0.02
+axis = 1
+texture = ExtResource("2_2ddyc")

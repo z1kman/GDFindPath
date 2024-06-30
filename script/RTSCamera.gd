@@ -151,3 +151,7 @@ func camera_automatic_pan(delta: float) -> void:
 		if current_mouse_position.y > viewport_size.y / 2:
 			pan_direction.y = 1
 		translate(Vector3(0, 0, pan_direction.y * delta * camera_automatic_pan_speed * zoom_factor) )
+		
+# Unproject Vector3 to Vector2
+func get_Vector2_from_Vector3(unproject_from_vec3: Vector3) -> Vector2:
+	return camera.unproject_position(unproject_from_vec3)

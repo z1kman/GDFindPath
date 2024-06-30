@@ -43,22 +43,27 @@ func _input(event: InputEvent) -> void:
 		mouse_left_click = true
 	if Input.is_action_just_released("mouse_leftclick"): 
 		mouse_left_click = false
+		ui_dragbox.visible = false
 		cast_selection()
 
+# Actually select units
 func cast_selection() -> void:
-	pass
+	for unit in BoxSelectionUnits_Visible.values():
+		if drag_rectangle_area.abs().has_point(player_camera.get_Vector2_from_Vector3(unit.transform.origin)):
+			unit.selected()
+		else:
+			unit.deselect()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if mouse_left_click:
+		drag_rectangle_area.size = get_global_mouse_position() - drag_rectangle_area.position
+		update_ui_dragbox()
+		
 		if !ui_dragbox.visible:
 			if drag_rectangle_area.size.length_squared() > min_drag_squared:
 				ui_dragbox.visible = true
-		
-		else :
-			update_ui_dragbox()
-		
-		drag_rectangle_area.size = get_global_mouse_position() - drag_rectangle_area.position
+
 
 func update_ui_dragbox() -> void:
 	ui_dragbox.size = abs(drag_rectangle_area.size)

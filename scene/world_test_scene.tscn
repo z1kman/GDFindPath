@@ -74,5 +74,11 @@ offset_bottom = 648.0
 scale = Vector2(0.999036, 0.792069)
 text = "Test"
 
+[node name="testunit2" parent="." instance=ExtResource("5_bkrp5")]
+transform = Transform3D(0.613045, 0, -0.790048, 0, 1, 0, 0.790048, 0, 0.613045, -6.77349, 0, -14.8107)
+
 [node name="testunit" parent="." instance=ExtResource("5_bkrp5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0775795, 0, -7.40534)
+
+[node name="testunit3" parent="." instance=ExtResource("5_bkrp5")]
+transform = Transform3D(-0.248352, 0, -0.96867, 0, 1, 0, 0.96867, 0, -0.248352, 0.77521, 0, -20.3294)
